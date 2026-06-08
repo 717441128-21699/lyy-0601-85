@@ -1,0 +1,56 @@
+@use '@/styles/variables.scss' as *;
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: rgba(255, 122, 69, 0.1);
+  border-radius: $radius-round;
+  transition: all $transition-base;
+
+  &.warning {
+    background: rgba(250, 173, 20, 0.15);
+  }
+
+  &.danger {
+    background: rgba(255, 77, 79, 0.15);
+    animation: pulse 1s infinite;
+  }
+
+  &.timeUp {
+    background: rgba(255, 77, 79, 0.3);
+  }
+}
+
+.icon {
+  font-size: $font-size-lg;
+}
+
+.time {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  font-variant-numeric: tabular-nums;
+
+  .warning & {
+    color: $color-warning;
+  }
+
+  .danger & {
+    color: $color-error;
+  }
+
+  .timeUp & {
+    color: $color-error;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}

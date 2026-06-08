@@ -1,0 +1,506 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.configSection {
+  padding: $page-padding;
+  padding-top: $spacing-lg;
+}
+
+.pageTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.titleEmoji {
+  font-size: 48rpx;
+}
+
+.card {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: 0 4rpx 16rpx rgba(255, 122, 69, 0.1);
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.optionGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.optionBtn {
+  @include button-reset;
+  padding: $spacing-sm $spacing-lg;
+  background: $color-bg-page;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  border: 2rpx solid $color-border;
+  transition: all $transition-fast;
+  min-width: 120rpx;
+
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    border-color: transparent;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.quantityOptions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.quantityBtn {
+  @include button-reset;
+  flex: 1;
+  height: 80rpx;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  border: 2rpx solid $color-border;
+  transition: all $transition-fast;
+
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    border-color: transparent;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.switchRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.switchLabel {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.timeLimitInput {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+
+  .label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  .input {
+    width: 120rpx;
+    height: 60rpx;
+    background: $color-bg-page;
+    border-radius: $radius-md;
+    text-align: center;
+    font-size: $font-size-md;
+    color: $color-text-primary;
+    border: 2rpx solid $color-border;
+  }
+
+  .unit {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+}
+
+.startBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  margin-top: $spacing-xl;
+  box-shadow: 0 8rpx 24rpx rgba(255, 122, 69, 0.4);
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    background: $color-text-disabled;
+    box-shadow: none;
+  }
+}
+
+// 答题模式样式
+.practiceHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, #FFF0E8 0%, #FFF7F0 100%);
+  padding: $spacing-md $page-padding;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex: 1;
+}
+
+.progressWrap {
+  flex: 1;
+}
+
+.headerActions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.iconBtn {
+  @include button-reset;
+  width: 72rpx;
+  height: 72rpx;
+  background: $color-bg-card;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  box-shadow: $shadow-card;
+  transition: all $transition-fast;
+
+  &:active {
+    transform: scale(0.9);
+    background: $color-bg-hover;
+  }
+}
+
+.questionSection {
+  padding: $page-padding;
+  padding-top: $spacing-xl;
+}
+
+.questionCardWrapper {
+  margin-bottom: $spacing-xl;
+  min-height: 300rpx;
+}
+
+.questionAnimate {
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.correctAnimation {
+  animation: bounceIn 0.5s ease;
+}
+
+.wrongAnimation {
+  animation: shake 0.4s ease;
+}
+
+.keyboardSection {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding calc(env(safe-area-inset-bottom) + 20rpx);
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  z-index: 99;
+}
+
+// 结果页样式
+.resultSection {
+  padding: $page-padding;
+  padding-top: $spacing-xl;
+  padding-bottom: 200rpx;
+}
+
+.scoreBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  background: linear-gradient(135deg, rgba(255, 122, 69, 0.1) 0%, rgba(255, 179, 0, 0.1) 100%);
+  border-radius: $radius-xl;
+}
+
+.scoreCircle {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $color-primary 0%, $color-gold 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-md;
+  box-shadow: 0 8rpx 32rpx rgba(255, 122, 69, 0.3);
+  animation: bounceIn 0.6s ease;
+}
+
+.scoreNumber {
+  font-size: 64rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.scoreLabel {
+  font-size: $font-size-sm;
+  color: $color-text-white;
+}
+
+.scoreTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.scoreSubtitle {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.statsGrid {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statCard {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  text-align: center;
+  box-shadow: $shadow-card;
+}
+
+.statIcon {
+  font-size: 40rpx;
+  margin-bottom: $spacing-sm;
+}
+
+.statValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.statLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.pointsReward {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 179, 0, 0.2) 100%);
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.pointsIcon {
+  font-size: 36rpx;
+}
+
+.pointsText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-star;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.sectionHeaderTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.wrongList {
+  max-height: 400rpx;
+  overflow-y: auto;
+}
+
+.wrongItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-sm;
+  border-left: 6rpx solid $color-error;
+}
+
+.wrongExpression {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.wrongAnswer {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+
+  .userAnswer {
+    color: $color-error;
+    text-decoration: line-through;
+  }
+
+  .correctAnswer {
+    color: $color-success;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.bottomActions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding calc(env(safe-area-inset-bottom) + 20rpx);
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: $spacing-md;
+  z-index: 99;
+}
+
+.actionBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &.primary {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+  }
+
+  &.secondary {
+    background: $color-bg-page;
+    color: $color-primary;
+    border: 2rpx solid $color-primary;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 休息提醒弹窗
+.restModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  padding: $page-padding;
+}
+
+.restModal {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-xl;
+  width: 100%;
+  max-width: 600rpx;
+  text-align: center;
+  animation: bounceIn 0.4s ease;
+}
+
+.restEmoji {
+  font-size: 100rpx;
+  margin-bottom: $spacing-md;
+}
+
+.restTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.restDesc {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+  margin-bottom: $spacing-xl;
+}
+
+.restBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-secondary 0%, $color-secondary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+}

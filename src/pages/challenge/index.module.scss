@@ -1,0 +1,466 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.listSection {
+  padding: $page-padding;
+  padding-top: $spacing-lg;
+}
+
+.pageTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.titleEmoji {
+  font-size: 48rpx;
+}
+
+.levelCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  transition: all $transition-base;
+  position: relative;
+  overflow: hidden;
+
+  &.locked {
+    opacity: 0.6;
+    background: $color-bg-page;
+  }
+
+  &:active:not(.locked) {
+    transform: scale(0.98);
+    box-shadow: $shadow-card-hover;
+  }
+}
+
+.levelNumber {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  flex-shrink: 0;
+
+  .locked & {
+    background: $color-text-disabled;
+  }
+}
+
+.levelInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.levelName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+  @include text-ellipsis;
+}
+
+.levelDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  @include text-ellipsis;
+}
+
+.levelMeta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.lockIcon {
+  font-size: 32rpx;
+  color: $color-text-tertiary;
+}
+
+.levelReward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  flex-shrink: 0;
+}
+
+.rewardPoints {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-gold;
+}
+
+// 关卡详情弹窗
+.detailOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $page-padding;
+}
+
+.detailModal {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  width: 100%;
+  max-width: 650rpx;
+  overflow: hidden;
+  animation: bounceIn 0.4s ease;
+}
+
+.detailHeader {
+  background: linear-gradient(135deg, $color-primary 0%, $color-gold 100%);
+  padding: $spacing-xl;
+  text-align: center;
+  color: $color-text-white;
+}
+
+.detailNumber {
+  font-size: 72rpx;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  margin-bottom: $spacing-sm;
+}
+
+.detailName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-xs;
+}
+
+.detailDesc {
+  font-size: $font-size-md;
+  opacity: 0.9;
+}
+
+.detailBody {
+  padding: $spacing-lg;
+}
+
+.detailStats {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statItem {
+  flex: 1;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  text-align: center;
+}
+
+.statIcon {
+  font-size: 32rpx;
+  margin-bottom: $spacing-xs;
+}
+
+.statValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.statLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.passInfo {
+  background: rgba(82, 196, 26, 0.1);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+}
+
+.passText {
+  font-size: $font-size-md;
+  color: $color-success;
+  font-weight: $font-weight-medium;
+}
+
+.startBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+  box-shadow: 0 8rpx 24rpx rgba(255, 122, 69, 0.4);
+
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    background: $color-text-disabled;
+    box-shadow: none;
+  }
+}
+
+.closeBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-md;
+  background: transparent;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+  margin-top: $spacing-md;
+}
+
+// 答题模式
+.practiceHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, #FFF0E8 0%, #FFF7F0 100%);
+  padding: $spacing-md $page-padding;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex: 1;
+}
+
+.progressWrap {
+  flex: 1;
+}
+
+.levelBadge {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background: linear-gradient(135deg, $color-level 0%, #B37FEB 100%);
+  border-radius: $radius-round;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+}
+
+.questionSection {
+  padding: $page-padding;
+  padding-top: $spacing-xl;
+}
+
+.questionCardWrapper {
+  margin-bottom: $spacing-xl;
+  min-height: 300rpx;
+}
+
+.questionAnimate {
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.correctAnimation {
+  animation: bounceIn 0.5s ease;
+}
+
+.wrongAnimation {
+  animation: shake 0.4s ease;
+}
+
+.keyboardSection {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding calc(env(safe-area-inset-bottom) + 20rpx);
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  z-index: 99;
+}
+
+// 结果页
+.resultSection {
+  padding: $page-padding;
+  padding-top: $spacing-xl;
+  padding-bottom: 200rpx;
+}
+
+.resultHeader {
+  text-align: center;
+  padding: $spacing-xl 0;
+  margin-bottom: $spacing-lg;
+}
+
+.resultEmoji {
+  font-size: 120rpx;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.resultTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.resultSubtitle {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.starsContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-xl;
+}
+
+.statsGrid {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statCard {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  text-align: center;
+  box-shadow: $shadow-card;
+}
+
+.statCardIcon {
+  font-size: 40rpx;
+  margin-bottom: $spacing-sm;
+}
+
+.statCardValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.statCardLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.rewardSection {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 179, 0, 0.15) 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+}
+
+.rewardTitle {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+}
+
+.rewardValue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-star;
+}
+
+.bottomActions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding calc(env(safe-area-inset-bottom) + 20rpx);
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: $spacing-md;
+  z-index: 99;
+}
+
+.actionBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &.primary {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+  }
+
+  &.secondary {
+    background: $color-bg-page;
+    color: $color-primary;
+    border: 2rpx solid $color-primary;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}

@@ -1,0 +1,46 @@
+@use '@/styles/variables.scss' as *;
+
+.progressBar {
+  width: 100%;
+}
+
+.progressText {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: $spacing-sm;
+}
+
+.current {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.separator {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+  margin: 0 $spacing-xs;
+}
+
+.total {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.percent {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-left: $spacing-sm;
+}
+
+.progressTrack {
+  width: 100%;
+  background: $color-bg-page;
+  border-radius: $radius-round;
+  overflow: hidden;
+}
+
+.progressFill {
+  border-radius: $radius-round;
+  transition: width $transition-base ease;
+}

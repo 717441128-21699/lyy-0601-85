@@ -1,0 +1,187 @@
+@use '@/styles/variables.scss' as *;
+
+.calendar {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.monthTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.continuousBadge {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background: linear-gradient(135deg, #FF7A45 0%, #FFB300 100%);
+  border-radius: $radius-round;
+}
+
+.flame {
+  font-size: $font-size-md;
+}
+
+.continuousText {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+}
+
+.weekDays {
+  display: flex;
+  margin-bottom: $spacing-sm;
+}
+
+.weekDay {
+  flex: 1;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  padding: $spacing-sm 0;
+
+  &.weekend {
+    color: $color-error;
+  }
+}
+
+.daysGrid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.dayCell {
+  width: calc(100% / 7);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xs;
+}
+
+.dayContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  position: relative;
+
+  &.checked {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  }
+
+  &.today {
+    border: 3rpx solid $color-primary;
+
+    &.checked {
+      border-color: $color-text-white;
+    }
+  }
+
+  &.future {
+    opacity: 0.3;
+  }
+}
+
+.dayText {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+
+  .checked & {
+    color: $color-text-white;
+  }
+
+  .future & {
+    color: $color-text-tertiary;
+  }
+}
+
+.checkMark {
+  font-size: 20rpx;
+  color: $color-text-white;
+  position: absolute;
+  bottom: 4rpx;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-xl;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 2rpx solid $color-border;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.legendDot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: $radius-xs;
+  background: $color-bg-page;
+  border: 2rpx solid $color-border;
+
+  &.checked {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    border: none;
+  }
+
+  &.today {
+    border-color: $color-primary;
+    background: $color-bg-card;
+  }
+}
+
+.legendText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.closeBtn {
+  @include button-reset;
+  width: 100%;
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background: $color-bg-light;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  width: 650rpx;
+  margin: $spacing-lg;
+}

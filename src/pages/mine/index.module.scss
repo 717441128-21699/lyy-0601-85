@@ -1,0 +1,462 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.contentSection {
+  padding: $page-padding;
+  padding-top: $spacing-lg;
+}
+
+.userCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.userCard::before {
+  content: '';
+  position: absolute;
+  top: -60rpx;
+  right: -40rpx;
+  width: 220rpx;
+  height: 220rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  background: white;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+}
+
+.userDetails {
+  flex: 1;
+}
+
+.userName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-xs;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.gradeBadge {
+  font-size: $font-size-xs;
+  padding: $spacing-xs $spacing-sm;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-full;
+}
+
+.userStats {
+  display: flex;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+  opacity: 0.9;
+}
+
+.statDivider {
+  opacity: 0.5;
+}
+
+.pointsSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.pointsInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.pointsIcon {
+  font-size: 40rpx;
+}
+
+.pointsValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+}
+
+.pointsLabel {
+  font-size: $font-size-sm;
+  opacity: 0.9;
+}
+
+.redeemBtn {
+  @include button-reset;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.statsCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg $spacing-md;
+  text-align: center;
+}
+
+.statsCardValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.statsCardLabel {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.statsCardUnit {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-left: 4rpx;
+}
+
+.sectionCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.sectionIcon {
+  font-size: 32rpx;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx solid $color-border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.menuIcon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  margin-right: $spacing-md;
+}
+
+.menuIconOrange {
+  background: rgba(255, 122, 69, 0.1);
+}
+
+.menuIconCyan {
+  background: rgba(78, 205, 196, 0.1);
+}
+
+.menuIconPurple {
+  background: rgba(155, 89, 182, 0.1);
+}
+
+.menuIconYellow {
+  background: rgba(255, 215, 0, 0.15);
+}
+
+.menuIconBlue {
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.menuIconRed {
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.menuIconGreen {
+  background: rgba(46, 204, 113, 0.1);
+}
+
+.menuContent {
+  flex: 1;
+}
+
+.menuTitle {
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  margin-bottom: 2rpx;
+}
+
+.menuDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.menuArrow {
+  font-size: 32rpx;
+  color: $color-text-tertiary;
+}
+
+.menuBadge {
+  background: $color-error;
+  color: white;
+  font-size: $font-size-xs;
+  padding: 2rpx 12rpx;
+  border-radius: $radius-full;
+  margin-right: $spacing-sm;
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx solid $color-border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.settingLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.settingIcon {
+  font-size: 36rpx;
+}
+
+.settingInfo {
+  flex: 1;
+}
+
+.settingTitle {
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  margin-bottom: 2rpx;
+}
+
+.settingDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.switch {
+  width: 96rpx;
+  height: 56rpx;
+  background: $color-bg-gray;
+  border-radius: $radius-full;
+  position: relative;
+  transition: background 0.3s;
+
+  &.active {
+    background: $color-primary;
+  }
+}
+
+.switchDot {
+  position: absolute;
+  top: 6rpx;
+  left: 6rpx;
+  width: 44rpx;
+  height: 44rpx;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+  transition: left 0.3s;
+
+  .active & {
+    left: 46rpx;
+  }
+}
+
+.selectValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-right: $spacing-sm;
+}
+
+.checkInCard {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 122, 69, 0.1) 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkInInfo {
+  flex: 1;
+}
+
+.checkInTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.checkInDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.checkInBtn {
+  @include button-reset;
+  background: $color-gold;
+  color: white;
+  padding: $spacing-md $spacing-xl;
+  border-radius: $radius-full;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &.disabled {
+    background: $color-bg-gray;
+    color: $color-text-tertiary;
+  }
+}
+
+.streakBadge {
+  background: $color-gold;
+  color: white;
+  font-size: $font-size-xs;
+  padding: 2rpx 12rpx;
+  border-radius: $radius-full;
+}
+
+.passwordModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.passwordContent {
+  width: 560rpx;
+  background: white;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  text-align: center;
+}
+
+.passwordTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.passwordDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-lg;
+}
+
+.passwordInput {
+  width: 100%;
+  height: 88rpx;
+  border: 2rpx solid $color-border-light;
+  border-radius: $radius-md;
+  font-size: $font-size-lg;
+  text-align: center;
+  letter-spacing: 8rpx;
+  margin-bottom: $spacing-lg;
+}
+
+.passwordBtns {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.passwordBtn {
+  @include button-reset;
+  flex: 1;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+}
+
+.cancelBtn {
+  background: $color-bg-light;
+  color: $color-text-primary;
+}
+
+.confirmBtn {
+  background: $color-primary;
+  color: white;
+}

@@ -1,0 +1,381 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.contentSection {
+  padding: $page-padding;
+  padding-top: $spacing-lg;
+}
+
+.pageTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.titleEmoji {
+  font-size: 48rpx;
+}
+
+.todayPlanCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.todayPlanCard::before {
+  content: '';
+  position: absolute;
+  top: -50rpx;
+  right: -50rpx;
+  width: 180rpx;
+  height: 180rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.planHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-lg;
+  position: relative;
+  z-index: 1;
+}
+
+.planTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-xs;
+}
+
+.planDate {
+  font-size: $font-size-sm;
+  opacity: 0.9;
+}
+
+.statusBadge {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.completedBadge {
+  background: rgba(78, 205, 196, 0.3);
+}
+
+.pendingBadge {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.planDetails {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+  position: relative;
+  z-index: 1;
+  margin-bottom: $spacing-lg;
+}
+
+.planDetailItem {
+  text-align: center;
+}
+
+.planDetailValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-xs;
+}
+
+.planDetailLabel {
+  font-size: $font-size-sm;
+  opacity: 0.9;
+}
+
+.planTypes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  position: relative;
+  z-index: 1;
+}
+
+.typeTag {
+  padding: $spacing-xs $spacing-md;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.startBtn {
+  @include button-reset;
+  width: 100%;
+  padding: $spacing-md;
+  background: white;
+  color: $color-primary;
+  border-radius: $radius-md;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  position: relative;
+  z-index: 1;
+
+  &.disabled {
+    opacity: 0.6;
+  }
+}
+
+.sectionCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitleLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.sectionIcon {
+  font-size: 36rpx;
+}
+
+.editBtn {
+  @include button-reset;
+  font-size: $font-size-sm;
+  color: $color-primary;
+  padding: $spacing-xs $spacing-sm;
+}
+
+.formGroup {
+  margin-bottom: $spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.formLabel {
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.required {
+  color: $color-error;
+}
+
+.questionCountOptions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+}
+
+.countOption {
+  padding: $spacing-md;
+  background: $color-bg-light;
+  border-radius: $radius-md;
+  text-align: center;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+
+  &.active {
+    background: rgba(255, 122, 69, 0.1);
+    border-color: $color-primary;
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.typeOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.typeOption {
+  padding: $spacing-md $spacing-lg;
+  background: $color-bg-light;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+
+  &.active {
+    background: rgba(255, 122, 69, 0.1);
+    border-color: $color-primary;
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.timeLimitOptions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+}
+
+.timeOption {
+  padding: $spacing-md;
+  background: $color-bg-light;
+  border-radius: $radius-md;
+  text-align: center;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+
+  &.active {
+    background: rgba(255, 122, 69, 0.1);
+    border-color: $color-primary;
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.timeValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.timeUnit {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.streakSection {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 122, 69, 0.1) 100%);
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.streakIcon {
+  font-size: 80rpx;
+}
+
+.streakInfo {
+  flex: 1;
+}
+
+.streakDays {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.streakText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.historySection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-bg-light;
+  border-radius: $radius-md;
+}
+
+.historyDate {
+  width: 100rpx;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.historyStatus {
+  width: 60rpx;
+  text-align: center;
+  font-size: 32rpx;
+}
+
+.historyInfo {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.historyStats {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.historyStat {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.saveBtn {
+  @include button-reset;
+  width: 100%;
+  padding: $spacing-md;
+  background: $color-primary;
+  color: white;
+  border-radius: $radius-md;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  margin-top: $spacing-lg;
+}
+
+.emptyHistory {
+  text-align: center;
+  padding: $spacing-xxl 0;
+  color: $color-text-tertiary;
+  font-size: $font-size-sm;
+}

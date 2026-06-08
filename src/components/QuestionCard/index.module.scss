@@ -1,0 +1,78 @@
+@use '@/styles/variables.scss' as *;
+
+.questionCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all $transition-base;
+  border: 4rpx solid transparent;
+
+  &.correct {
+    border-color: $color-success;
+    background: rgba(82, 196, 26, 0.05);
+  }
+
+  &.wrong {
+    border-color: $color-error;
+    background: rgba(255, 77, 79, 0.05);
+  }
+}
+
+.questionIndex {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  align-self: flex-start;
+  margin-bottom: $spacing-sm;
+}
+
+.expression {
+  font-size: 64rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  letter-spacing: 4rpx;
+}
+
+.answerRow {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-md;
+}
+
+.userAnswer {
+  font-size: 56rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  min-width: 120rpx;
+  text-align: center;
+
+  &.correctText {
+    color: $color-success;
+  }
+
+  &.wrongText {
+    color: $color-error;
+    text-decoration: line-through;
+  }
+}
+
+.correctAnswer {
+  font-size: $font-size-md;
+  color: $color-success;
+}
+
+.placeholder {
+  font-size: 56rpx;
+  color: $color-text-tertiary;
+}
+
+.timeSpent {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-top: $spacing-sm;
+}

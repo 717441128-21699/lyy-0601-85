@@ -1,0 +1,131 @@
+@use '@/styles/variables.scss' as *;
+
+.draftBoardOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+}
+
+.draftBoard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 700rpx;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  border-bottom: 2rpx solid $color-border;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.closeBtn {
+  @include button-reset;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.canvasContainer {
+  padding: $spacing-md;
+  background: #FFFEF5;
+}
+
+.canvas {
+  width: 100%;
+  height: 500rpx;
+  border: 2rpx dashed $color-border;
+  border-radius: $radius-md;
+  background: #FFFFFF;
+}
+
+.toolbar {
+  padding: $spacing-md $spacing-lg;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.toolGroup {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.toolLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  width: 80rpx;
+}
+
+.colorBtn {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 4rpx solid transparent;
+  transition: all $transition-fast;
+
+  &.active {
+    border-color: $color-primary;
+    transform: scale(1.1);
+  }
+}
+
+.widthBtn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: $color-bg-card;
+  border: 2rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-fast;
+
+  &.active {
+    border-color: $color-primary;
+    background: rgba(255, 122, 69, 0.1);
+  }
+}
+
+.clearBtn {
+  @include button-reset;
+  height: $button-height-md;
+  background: rgba(255, 77, 79, 0.1);
+  color: $color-error;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+}

@@ -1,0 +1,99 @@
+@use '@/styles/variables.scss' as *;
+
+.answerPad {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-float;
+}
+
+.display {
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  min-height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border: 2rpx solid $color-border;
+}
+
+.displayText {
+  font-size: 56rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+
+  &.placeholder {
+    color: $color-text-tertiary;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-normal;
+  }
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.keyRow {
+  display: flex;
+  gap: $spacing-sm;
+
+  &:last-child {
+    .key {
+      flex: 1;
+    }
+  }
+}
+
+.key {
+  @include button-reset;
+  flex: 1;
+  height: 100rpx;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  font-size: 36rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  transition: all $transition-fast;
+  border: 2rpx solid $color-border;
+
+  &:active {
+    background: $color-primary;
+    color: $color-text-white;
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &.keyDelete {
+    background: rgba(255, 77, 79, 0.1);
+    color: $color-error;
+  }
+
+  &.keySpecial {
+    background: rgba(22, 93, 255, 0.1);
+    color: $color-info;
+  }
+
+  &.keyClear {
+    background: rgba(250, 173, 20, 0.1);
+    color: $color-warning;
+    flex: 1;
+    margin-right: $spacing-sm;
+  }
+
+  &.keySubmit {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    flex: 2;
+
+    &:disabled {
+      background: $color-text-disabled;
+    }
+  }
+}
