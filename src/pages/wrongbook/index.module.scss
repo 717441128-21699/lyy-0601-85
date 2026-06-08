@@ -459,3 +459,76 @@
   border-radius: $radius-button;
   border: 2rpx solid $color-border;
 }
+
+// 打印内容页面
+.printContentPage {
+  min-height: 100vh;
+  background: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.printContentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $page-padding;
+  background: $color-primary;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.printBackBtn {
+  @include button-reset;
+  color: white;
+  font-size: $font-size-base;
+  padding: $spacing-sm $spacing-md;
+}
+
+.printContentTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  flex: 1;
+  text-align: center;
+}
+
+.printActionBtn {
+  @include button-reset;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+}
+
+.printPreview {
+  flex: 1;
+  padding: $page-padding;
+  overflow-y: auto;
+  background: white;
+}
+
+.printPreviewHeader {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+  padding-bottom: $spacing-lg;
+  border-bottom: 2rpx solid #333;
+}
+
+.printPreviewItem {
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md;
+  border: 1rpx solid #eee;
+  border-radius: $radius-md;
+}
+
+.printContentFooter {
+  display: flex;
+  padding: $spacing-md $page-padding calc(env(safe-area-inset-bottom) + 20rpx);
+  background: white;
+  border-top: 1rpx solid #eee;
+  position: sticky;
+  bottom: 0;
+}

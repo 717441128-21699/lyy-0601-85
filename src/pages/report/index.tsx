@@ -15,10 +15,6 @@ const ReportPage: React.FC = () => {
   const [showShareModal, setShowShareModal] = useState(false);
 
   const generateReport = useCallback((): WeeklyReport | null => {
-    if (practiceRecords.length === 0) {
-      return mockWeeklyReport;
-    }
-
     const weekStart = dayjs().subtract(6, 'day').format('YYYY-MM-DD');
     const weekEnd = dayjs().format('YYYY-MM-DD');
 
@@ -28,7 +24,7 @@ const ReportPage: React.FC = () => {
     );
 
     if (weekRecords.length === 0) {
-      return mockWeeklyReport;
+      return null;
     }
 
     const totalQuestions = weekRecords.reduce((sum, r) => sum + r.totalQuestions, 0);

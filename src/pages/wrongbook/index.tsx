@@ -20,12 +20,16 @@ const WrongBookPage: React.FC = () => {
     wrongQuestions,
     removeWrongQuestion,
     clearWrongQuestions,
-    addPoints
+    addPoints,
+    userProfile
   } = useAppStore();
 
   const [mode, setMode] = useState<PageMode>('list');
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [showPrintModal, setShowPrintModal] = useState(false);
+  const [showPrintContent, setShowPrintContent] = useState(false);
+  const [printType, setPrintType] = useState<'题目卷' | '答案卷'>('题目卷');
+  const [printContent, setPrintContent] = useState('');
 
   const [practiceQuestions, setPracticeQuestions] = useState<WrongQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -121,21 +125,22 @@ const WrongBookPage: React.FC = () => {
   const finishPractice = (finalQuestions: WrongQuestion[]) => {
     setMode('result');
     const finalCorrect = finalQuestions.filter(q => q.isCorrect).length;
-    const masteredCount = masteredIds.length + (finalCorrect - masteredIds.length);
+    const newlyMasteredIds = finalQuestions.filter(q => q.isCorrect).map(q => q.id);
     const points = Math.round(finalCorrect * 2);
 
     addPoints(points);
 
-    masteredIds.forEach(id => {
+    newlyMasteredIds.forEach(id => {
       removeWrongQuestion(id);
     });
+    setMasteredIds([]);
 
     Taro.showToast({
       title: `答对${finalCorrect}题，获得${points}积分`,
       icon: 'success'
     });
 
-    console.log('[WrongBook] 错题重练完成', { correct: finalCorrect, total: finalQuestions.length, points });
+    console.log('[WrongBook] 错题重练完成', { correct: finalCorrect, total: finalQuestions.length, points, removedIds: newlyMasteredIds });
   };
 
   const handleRemove = (id: string) => {
@@ -164,10 +169,86 @@ const WrongBookPage: React.FC = () => {
     });
   };
 
-  const handlePrint = (type: string) => {
+  const generatePrintContent = (type: '题目卷' | '答案卷') => {
+    const today = dayjs().format('YYYY年MM月DD日');
+    const typeName = filterType === 'all' ? '全部题型' : QuestionTypeNames[filterType as QuestionType];
+    
+    let html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>口算错题${type}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Microsoft YaHei', sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+    .title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+    .subtitle { font-size: 14px; color: #666; }
+    .info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; color: #666; }
+    .question-list { }
+    .question-item { margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 8px; }
+    .question-number { font-weight: bold; color: #FF7A45; margin-right: 10px; }
+    .question-expression { font-size: 18px; font-family: 'Courier New', monospace; }
+    .answer-section { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; }
+    .answer-label { color: #52C41A; font-weight: bold; }
+    .answer-value { font-family: 'Courier New', monospace; font-weight: bold; }
+    .wrong-type { font-size: 12px; color: #999; margin-top: 5px; }
+    .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 20px; }
+    @media print {
+      body { padding: 20px; }
+      .question-item { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">📚 口算错题${type}</div>
+    <div class="subtitle">${typeName} · 共${filteredQuestions.length}道题</div>
+  </div>
+  <div class="info">
+    <span>生成日期：${today}</span>
+    <span>学生姓名：${userProfile.name}</span>
+  </div>
+  <div class="question-list">
+`;
+
+    filteredQuestions.forEach((q, idx) => {
+      html += `
+    <div class="question-item">
+      <div>
+        <span class="question-number">${idx + 1}.</span>
+        <span class="question-expression">${q.expression} = ?</span>
+      </div>
+      ${type === '答案卷' ? `
+      <div class="answer-section">
+        <span class="answer-label">正确答案：</span>
+        <span class="answer-value">${q.answer}</span>
+        <div class="wrong-type">错误类型：${q.wrongType} · 做错${q.wrongCount}次</div>
+      </div>
+      ` : ''}
+    </div>
+`;
+    });
+
+    html += `
+  </div>
+  <div class="footer">
+    由「口算小达人」小程序生成 · 每天练习，进步看得见！
+  </div>
+</body>
+</html>`;
+
+    return html;
+  };
+
+  const handlePrint = (type: '题目卷' | '答案卷') => {
     setShowPrintModal(false);
-    Taro.showToast({ title: `已生成${type}，可在浏览器中打印`, icon: 'success' });
-    console.log('[WrongBook] 打印错题', { type, count: filteredQuestions.length });
+    setPrintType(type);
+    const content = generatePrintContent(type);
+    setPrintContent(content);
+    setShowPrintContent(true);
+    console.log('[WrongBook] 生成打印内容', { type, count: filteredQuestions.length });
   };
 
   const backToList = () => {
@@ -297,6 +378,13 @@ const WrongBookPage: React.FC = () => {
             清空错题
           </Button>
           <Button
+            className={classNames(styles.bottomBtn, styles.secondary)}
+            onClick={() => setShowPrintModal(true)}
+            disabled={wrongQuestions.length === 0}
+          >
+            🖨️ 打印错题
+          </Button>
+          <Button
             className={classNames(styles.bottomBtn, styles.primary)}
             onClick={startPractice}
             disabled={wrongQuestions.length === 0}
@@ -308,7 +396,9 @@ const WrongBookPage: React.FC = () => {
         {showPrintModal && (
           <View className={styles.printModalOverlay} onClick={() => setShowPrintModal(false)}>
             <View className={styles.printModal} onClick={(e) => e.stopPropagation()}>
-              <Text className={styles.printTitle}>选择打印方式</Text>
+              <Text className={styles.printTitle}>
+                打印错题 {filterType !== 'all' && `(${filteredQuestions.length}道)`}
+              </Text>
               <View className={styles.printOptions}>
                 <Button className={styles.printOption} onClick={() => handlePrint('题目卷')}>
                   📄 打印题目卷（仅题目）
@@ -379,6 +469,7 @@ const WrongBookPage: React.FC = () => {
 
   if (mode === 'result') {
     const finalCorrect = practiceQuestions.filter(q => q.isCorrect).length;
+    const newlyMastered = practiceQuestions.filter(q => q.isCorrect).length;
     const score = Math.round((finalCorrect / practiceQuestions.length) * 100);
 
     return (
@@ -387,10 +478,84 @@ const WrongBookPage: React.FC = () => {
           <EmptyState
             icon={score >= 80 ? '🎉' : '💪'}
             title={`完成！得分 ${score} 分`}
-            description={`答对 ${finalCorrect}/${practiceQuestions.length} 题，${masteredIds.length} 道错题已掌握并移除`}
+            description={`答对 ${finalCorrect}/${practiceQuestions.length} 题，${newlyMastered} 道错题已掌握并移除`}
             actionText="返回错题本"
             onAction={backToList}
           />
+        </View>
+      </View>
+    );
+  }
+
+  if (showPrintContent) {
+    return (
+      <View className={styles.printContentPage}>
+        <View className={styles.printContentHeader}>
+          <Button className={styles.printBackBtn} onClick={() => setShowPrintContent(false)}>
+            ← 返回
+          </Button>
+          <Text className={styles.printContentTitle}>
+            {printType}预览（{filteredQuestions.length}道）
+          </Text>
+          <Button 
+            className={styles.printActionBtn}
+            onClick={() => {
+              Taro.setClipboardData({
+                data: printContent,
+                success: () => {
+                  Taro.showModal({
+                    title: '打印说明',
+                    content: 'HTML内容已复制到剪贴板。请粘贴到任意文本编辑器中保存为.html文件，然后用浏览器打开即可打印。',
+                    confirmText: '知道了'
+                  });
+                }
+              });
+            }}
+          >
+            📋 复制HTML
+          </Button>
+        </View>
+        <View className={styles.printPreview}>
+          <View className={styles.printPreviewHeader}>
+            <Text style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
+              📚 口算错题{printType}
+            </Text>
+            <Text style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
+              {filterType === 'all' ? '全部题型' : QuestionTypeNames[filterType as QuestionType]} · 共{filteredQuestions.length}道题
+            </Text>
+          </View>
+          {filteredQuestions.map((q, idx) => (
+            <View key={q.id} className={styles.printPreviewItem}>
+              <Text style={{ fontSize: '18px', fontFamily: 'monospace' }}>
+                <Text style={{ fontWeight: 'bold', color: '#FF7A45', marginRight: '10px' }}>{idx + 1}.</Text>
+                {q.expression} = ?
+              </Text>
+              {printType === '答案卷' && (
+                <Text style={{ display: 'block', marginTop: '8px', fontSize: '14px', color: '#52C41A' }}>
+                  正确答案：<Text style={{ fontWeight: 'bold' }}>{q.answer}</Text>
+                  <Text style={{ color: '#999', marginLeft: '10px' }}>
+                    （{q.wrongType} · 做错{q.wrongCount}次）
+                  </Text>
+                </Text>
+              )}
+            </View>
+          ))}
+        </View>
+        <View className={styles.printContentFooter}>
+          <Button 
+            className={styles.printActionBtn}
+            onClick={() => {
+              Taro.setClipboardData({
+                data: printContent,
+                success: () => {
+                  Taro.showToast({ title: '已复制HTML代码', icon: 'success' });
+                }
+              });
+            }}
+            style={{ flex: 1, marginRight: '12rpx' }}
+          >
+            📋 复制HTML代码
+          </Button>
         </View>
       </View>
     );

@@ -88,7 +88,7 @@ interface AppStore extends AppState {
   redeemReward: (rewardId: string) => boolean;
   checkIn: () => boolean;
   updateDailyPlan: (plan: Partial<DailyPlan>) => void;
-  completeDailyPlan: () => void;
+  completeDailyPlan: (totalQuestions?: number, questionTypes?: QuestionType[]) => boolean;
   updateSettings: (settings: Partial<AppSettings>) => void;
   verifyParentPassword: (password: string) => boolean;
 }
@@ -259,9 +259,22 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
   },
   
-  completeDailyPlan: () => {
+  completeDailyPlan: (totalQuestions?: number, questionTypes?: QuestionType[]) => {
     const plan = get().dailyPlan;
-    if (plan) {
+    const today = dayjs().format('YYYY-MM-DD');
+    
+    if (plan && plan.date === today) {
+      if (totalQuestions !== undefined && totalQuestions < plan.questionCount) {
+        return false;
+      }
+      
+      if (questionTypes && plan.questionTypes.length > 0) {
+        const hasAllTypes = plan.questionTypes.every(type => questionTypes.includes(type));
+        if (!hasAllTypes) {
+          return false;
+        }
+      }
+      
       set({
         dailyPlan: {
           ...plan,
@@ -270,7 +283,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
         }
       });
       get().saveToStorage();
+      return true;
     }
+    return false;
   },
   
   updateSettings: (settings) => {

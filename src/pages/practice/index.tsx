@@ -23,6 +23,7 @@ const PracticePage: React.FC = () => {
     currentGrade,
     selectedQuestionTypes,
     settings,
+    dailyPlan,
     setGrade,
     setQuestionTypes,
     addWrongQuestion,
@@ -31,12 +32,23 @@ const PracticePage: React.FC = () => {
     completeDailyPlan
   } = useAppStore();
 
+  const today = dayjs().format('YYYY-MM-DD');
+  const hasTodayPlan = dailyPlan && dailyPlan.date === today;
+
   const [mode, setMode] = useState<PageMode>('config');
   const [selectedGrade, setSelectedGrade] = useState<Grade>(currentGrade);
-  const [types, setTypes] = useState<QuestionType[]>(selectedQuestionTypes);
-  const [quantity, setQuantity] = useState(20);
-  const [timeLimitEnabled, setTimeLimitEnabled] = useState(true);
-  const [timeLimit, setTimeLimit] = useState(600);
+  const [types, setTypes] = useState<QuestionType[]>(
+    hasTodayPlan ? dailyPlan!.questionTypes : selectedQuestionTypes
+  );
+  const [quantity, setQuantity] = useState(
+    hasTodayPlan ? dailyPlan!.questionCount : 20
+  );
+  const [timeLimitEnabled, setTimeLimitEnabled] = useState(
+    hasTodayPlan ? dailyPlan!.timeLimit > 0 : true
+  );
+  const [timeLimit, setTimeLimit] = useState(
+    hasTodayPlan ? (dailyPlan!.timeLimit > 0 ? dailyPlan!.timeLimit : 600) : 600
+  );
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -49,6 +61,7 @@ const PracticePage: React.FC = () => {
   const [showDraftBoard, setShowDraftBoard] = useState(false);
   const [showRestModal, setShowRestModal] = useState(false);
   const [practiceDuration, setPracticeDuration] = useState(0);
+  const [finalEarnedPointsState, setFinalEarnedPointsState] = useState(0);
   const durationTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const grades: Grade[] = ['grade1', 'grade2', 'grade3', 'grade4', 'grade5', 'grade6'];
@@ -61,7 +74,11 @@ const PracticePage: React.FC = () => {
   const wrongQuestions = questions.filter(q => q.userAnswer !== undefined && !q.isCorrect);
   const totalTime = Math.round((Date.now() - practiceStartTime) / 1000);
   const score = questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
-  const earnedPoints = Math.round(correctCount * 1 + (score >= 90 ? 10 : score >= 80 ? 5 : 0));
+  const calculateEarnedPoints = (correct: number, total: number) => {
+    const s = total > 0 ? Math.round((correct / total) * 100) : 0;
+    return Math.round(correct * 1 + (s >= 90 ? 10 : s >= 80 ? 5 : 0));
+  };
+  const earnedPoints = calculateEarnedPoints(correctCount, questions.length);
 
   useEffect(() => {
     return () => {
@@ -186,6 +203,7 @@ const PracticePage: React.FC = () => {
     const finalCorrect = finalQuestions.filter(q => q.isCorrect).length;
     const finalTotal = finalQuestions.length;
     const finalTime = Math.round((Date.now() - practiceStartTime) / 1000);
+    const finalEarnedPoints = calculateEarnedPoints(finalCorrect, finalTotal);
 
     const record: PracticeRecord = {
       id: `record_${Date.now()}`,
@@ -199,13 +217,14 @@ const PracticePage: React.FC = () => {
     };
 
     addPracticeRecord(record);
-    addPoints(earnedPoints);
+    addPoints(finalEarnedPoints);
+    setFinalEarnedPointsState(finalEarnedPoints);
 
     if (finalCorrect / finalTotal >= 0.6) {
-      completeDailyPlan();
+      completeDailyPlan(finalTotal, types);
     }
 
-    console.log('[Practice] 练习完成', { score: Math.round((finalCorrect / finalTotal) * 100), correctCount: finalCorrect, totalQuestions: finalTotal, earnedPoints });
+    console.log('[Practice] 练习完成', { score: Math.round((finalCorrect / finalTotal) * 100), correctCount: finalCorrect, totalQuestions: finalTotal, earnedPoints: finalEarnedPoints });
   };
 
   const handleTimeUp = () => {
@@ -469,7 +488,7 @@ const PracticePage: React.FC = () => {
 
           <View className={styles.pointsReward}>
             <Text className={styles.pointsIcon}>🏆</Text>
-            <Text className={styles.pointsText}>获得 {earnedPoints} 积分奖励！</Text>
+            <Text className={styles.pointsText}>获得 {finalEarnedPointsState} 积分奖励！</Text>
           </View>
 
           {wrongQuestions.length > 0 && (
