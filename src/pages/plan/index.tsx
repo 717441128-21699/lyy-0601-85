@@ -101,6 +101,27 @@ const PlanPage: React.FC = () => {
     .map(r => r.date)
     .filter((v, i, a) => a.indexOf(v) === i).length;
 
+  const todayRecords = practiceRecords.filter(r => r.date === today);
+  const todayTotalQuestions = todayRecords.reduce((sum, r) => sum + r.totalQuestions, 0);
+  const todayCorrectCount = todayRecords.reduce((sum, r) => sum + r.correctCount, 0);
+  const todayCorrectRate = todayTotalQuestions > 0 ? Math.round((todayCorrectCount / todayTotalQuestions) * 100) : 0;
+  
+  const todayPlanCompleted = todayRecords.some(r => r.completedAsPlan);
+  const lastUnmetReasons = todayRecords.length > 0 
+    ? todayRecords[todayRecords.length - 1].unmetReasons 
+    : [];
+
+  const getProgressStatus = () => {
+    if (isCompleted) return { text: '已完成', status: 'completed' };
+    if (todayTotalQuestions === 0) return { text: '未开始', status: 'pending' };
+    if (todayTotalQuestions < dailyPlan!.questionCount) return { text: '进行中', status: 'progress' };
+    if (lastUnmetReasons.length > 0) return { text: '未达成', status: 'failed' };
+    return { text: '已完成', status: 'completed' };
+  };
+
+  const progressStatus = getProgressStatus();
+  const progressPercent = Math.min(100, Math.round((todayTotalQuestions / (dailyPlan?.questionCount || 20)) * 100));
+
   return (
     <View className={styles.pageContainer}>
       <View className={styles.contentSection}>
@@ -134,12 +155,57 @@ const PlanPage: React.FC = () => {
               <View
                 className={classNames(
                   styles.statusBadge,
-                  isCompleted ? styles.completedBadge : styles.pendingBadge
+                  progressStatus.status === 'completed' ? styles.completedBadge :
+                  progressStatus.status === 'progress' ? styles.progressBadge :
+                  progressStatus.status === 'failed' ? styles.failedBadge :
+                  styles.pendingBadge
                 )}
               >
-                {isCompleted ? '✓ 已完成' : '待完成'}
+                {progressStatus.status === 'completed' ? '✓ 已完成' :
+                 progressStatus.status === 'progress' ? '⏳ 进行中' :
+                 progressStatus.status === 'failed' ? '⚠️ 未达成' :
+                 '待完成'}
               </View>
             </View>
+
+            {todayTotalQuestions > 0 && (
+              <View className={styles.progressSection}>
+                <View className={styles.progressHeader}>
+                  <Text className={styles.progressLabel}>今日进度</Text>
+                  <Text className={styles.progressValue}>
+                    {todayTotalQuestions} / {dailyPlan.questionCount} 题
+                  </Text>
+                </View>
+                <View className={styles.progressBar}>
+                  <View 
+                    className={classNames(
+                      styles.progressFill,
+                      progressStatus.status === 'completed' ? styles.progressComplete :
+                      progressStatus.status === 'failed' ? styles.progressFailed :
+                      styles.progressInProgress
+                    )}
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </View>
+                <View className={styles.progressStats}>
+                  <Text className={styles.progressStat}>
+                    正确率: {todayCorrectRate}%
+                  </Text>
+                  <Text className={styles.progressStat}>
+                    {todayRecords.length} 次练习
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {lastUnmetReasons.length > 0 && !isCompleted && (
+              <View className={styles.unmetReasonsSection}>
+                <Text className={styles.unmetReasonsTitle}>⚠️ 上次未达成原因：</Text>
+                {lastUnmetReasons.map((reason, idx) => (
+                  <Text key={idx} className={styles.unmetReasonItem}>• {reason}</Text>
+                ))}
+              </View>
+            )}
 
             <View className={styles.planDetails}>
               <View className={styles.planDetailItem}>
@@ -167,13 +233,37 @@ const PlanPage: React.FC = () => {
               ))}
             </View>
 
+            {todayRecords.length > 0 && (
+              <View className={styles.todayRecordsSection}>
+                <Text className={styles.sectionTitle}>今日练习记录</Text>
+                {todayRecords.map((record, idx) => (
+                  <View key={record.id} className={styles.recordItem}>
+                    <View className={styles.recordInfo}>
+                      <Text className={styles.recordType}>
+                        {record.questionTypes.map(t => QuestionTypeNames[t]).join('/')}
+                      </Text>
+                      <Text className={styles.recordMeta}>
+                        {record.totalQuestions}题 · {record.totalTime}秒 · 正确率{Math.round((record.correctCount / record.totalQuestions) * 100)}%
+                      </Text>
+                    </View>
+                    <View className={classNames(
+                      styles.recordBadge,
+                      record.completedAsPlan ? styles.recordSuccess : styles.recordNormal
+                    )}>
+                      {record.completedAsPlan ? '✓ 按计划' : '自由练习'}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+
             <Button
               className={classNames(styles.startBtn, { [styles.disabled]: isCompleted })}
               onClick={handleStartPractice}
               disabled={isCompleted}
             >
               <Text>{isCompleted ? '🎉' : '✏️'}</Text>
-              <Text>{isCompleted ? '今日已完成' : '开始练习'}</Text>
+              <Text>{isCompleted ? '今日已完成' : todayTotalQuestions > 0 ? '继续练习' : '开始练习'}</Text>
             </Button>
           </View>
         )}

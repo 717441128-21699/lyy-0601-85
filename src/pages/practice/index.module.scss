@@ -307,6 +307,104 @@
   color: $color-text-secondary;
 }
 
+// 计划完成结果
+.planResultCard {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  border: 2rpx solid $color-border;
+}
+
+.planSuccess {
+  border-color: $color-success;
+  background: rgba(82, 196, 26, 0.05);
+}
+
+.planFailed {
+  border-color: $color-warning;
+  background: rgba(250, 173, 20, 0.05);
+}
+
+.planResultHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.planResultIcon {
+  font-size: 48rpx;
+}
+
+.planResultInfo {
+  flex: 1;
+}
+
+.planResultTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.planResultSubtitle {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.planResultDetails {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+}
+
+.planResultItem {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.planResultLabel {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.planResultValue {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.unmetReasons {
+  background: rgba(250, 173, 20, 0.1);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+}
+
+.unmetReasonsTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-warning;
+  margin-bottom: $spacing-sm;
+  display: block;
+}
+
+.unmetReasonItem {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  display: block;
+  margin-bottom: $spacing-xs;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .statsGrid {
   display: flex;
   gap: $spacing-md;

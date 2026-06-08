@@ -33,18 +33,26 @@ const ReportPage: React.FC = () => {
     const totalTime = weekRecords.reduce((sum, r) => sum + r.totalTime, 0);
     const avgTimePerQuestion = totalQuestions > 0 ? Math.round(totalTime / totalQuestions) : 0;
 
-    const dailyStatsMap = new Map<string, { count: number; correct: number; time: number }>();
+    const dailyStatsMap = new Map<string, { 
+      count: number; correct: number; time: number; 
+      planCompleted: boolean; planQuestionCount: number; planCorrectCount: number 
+    }>();
     for (let i = 6; i >= 0; i--) {
       const date = dayjs().subtract(i, 'day').format('YYYY-MM-DD');
-      dailyStatsMap.set(date, { count: 0, correct: 0, time: 0 });
+      dailyStatsMap.set(date, { count: 0, correct: 0, time: 0, planCompleted: false, planQuestionCount: 0, planCorrectCount: 0 });
     }
 
     weekRecords.forEach(record => {
       const date = record.date;
-      const stats = dailyStatsMap.get(date) || { count: 0, correct: 0, time: 0 };
+      const stats = dailyStatsMap.get(date) || { count: 0, correct: 0, time: 0, planCompleted: false, planQuestionCount: 0, planCorrectCount: 0 };
       stats.count += record.totalQuestions;
       stats.correct += record.correctCount;
       stats.time += record.totalTime;
+      if (record.completedAsPlan) {
+        stats.planCompleted = true;
+        stats.planQuestionCount += record.totalQuestions;
+        stats.planCorrectCount += record.correctCount;
+      }
       dailyStatsMap.set(date, stats);
     });
 
@@ -52,7 +60,11 @@ const ReportPage: React.FC = () => {
       date,
       questionCount: stats.count,
       correctRate: stats.count > 0 ? Math.round((stats.correct / stats.count) * 100) : 0,
-      avgTime: stats.count > 0 ? Math.round(stats.time / stats.count) : 0
+      avgTime: stats.count > 0 ? Math.round(stats.time / stats.count) : 0,
+      planCompleted: stats.planCompleted,
+      planQuestionCount: stats.planQuestionCount,
+      planCorrectCount: stats.planCorrectCount,
+      planCorrectRate: stats.planQuestionCount > 0 ? Math.round((stats.planCorrectCount / stats.planQuestionCount) * 100) : 0
     }));
 
     const typeStats = new Map<QuestionType, { wrong: number; total: number }>();
@@ -220,14 +232,27 @@ const ReportPage: React.FC = () => {
           <View className={styles.dailyChart}>
             {report.dailyStats.map((stat, index) => (
               <View className={styles.chartBar} key={index}>
+                {stat.planCompleted && (
+                  <View className={styles.planBadge}>✓</View>
+                )}
                 <View className={styles.barContainer}>
                   <View
-                    className={styles.barFill}
+                    className={classNames(
+                      styles.barFill,
+                      stat.planCompleted ? styles.barPlanCompleted : ''
+                    )}
                     style={{ height: `${Math.max(stat.correctRate, 10)}%` }}
                   />
                   <Text className={styles.barRate}>{stat.correctRate}%</Text>
                 </View>
-                <Text className={styles.barCount}>{stat.questionCount}题</Text>
+                <Text className={styles.barCount}>
+                  {stat.questionCount > 0 ? `${stat.questionCount}题` : '-'}
+                </Text>
+                {stat.planCompleted && (
+                  <Text className={styles.planCorrectRate}>
+                    计划{stat.planCorrectRate}%
+                  </Text>
+                )}
                 <Text className={styles.barLabel}>{getWeekDay(stat.date)}</Text>
               </View>
             ))}

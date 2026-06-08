@@ -73,11 +73,175 @@
 }
 
 .completedBadge {
-  background: rgba(78, 205, 196, 0.3);
+  background: rgba(82, 196, 26, 0.2);
+  color: $color-success;
+}
+
+.progressBadge {
+  background: rgba(24, 144, 255, 0.2);
+  color: $color-info;
+}
+
+.failedBadge {
+  background: rgba(250, 173, 20, 0.2);
+  color: $color-warning;
 }
 
 .pendingBadge {
   background: rgba(255, 255, 255, 0.2);
+}
+
+// 进度条
+.progressSection {
+  background: $color-bg-page;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.progressLabel {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.progressValue {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.progressBar {
+  height: 16rpx;
+  background: $color-bg-gray;
+  border-radius: $radius-full;
+  overflow: hidden;
+  margin-bottom: $spacing-md;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: $radius-full;
+  transition: width 0.5s ease;
+}
+
+.progressComplete {
+  background: $color-success;
+}
+
+.progressInProgress {
+  background: $color-primary;
+}
+
+.progressFailed {
+  background: $color-warning;
+}
+
+.progressStats {
+  display: flex;
+  gap: $spacing-lg;
+}
+
+.progressStat {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+// 未达成原因
+.unmetReasonsSection {
+  background: rgba(250, 173, 20, 0.1);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.unmetReasonsTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-warning;
+  margin-bottom: $spacing-sm;
+  display: block;
+}
+
+.unmetReasonItem {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  display: block;
+  margin-bottom: $spacing-xs;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// 今日记录
+.todayRecordsSection {
+  margin-bottom: $spacing-lg;
+  padding-top: $spacing-lg;
+  border-top: 2rpx solid $color-divider;
+}
+
+.sectionTitle {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.recordItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.recordInfo {
+  flex: 1;
+}
+
+.recordType {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.recordMeta {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.recordBadge {
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.recordSuccess {
+  background: rgba(82, 196, 26, 0.1);
+  color: $color-success;
+}
+
+.recordNormal {
+  background: $color-bg-gray;
+  color: $color-text-secondary;
 }
 
 .planDetails {

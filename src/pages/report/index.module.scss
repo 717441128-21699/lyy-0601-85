@@ -181,6 +181,37 @@
   color: $color-text-tertiary;
 }
 
+.planBadge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 32rpx;
+  height: 32rpx;
+  background: $color-success;
+  color: white;
+  border-radius: 50%;
+  font-size: 20rpx;
+  font-weight: $font-weight-bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.barPlanCompleted {
+  background: linear-gradient(180deg, $color-success 0%, #95DE64 100%) !important;
+}
+
+.planCorrectRate {
+  font-size: 20rpx;
+  color: $color-success;
+  font-weight: $font-weight-semibold;
+}
+
+.chartBar {
+  position: relative;
+}
+
 .weakTypesSection,
 .strongTypesSection {
   display: flex;

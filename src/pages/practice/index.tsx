@@ -226,27 +226,86 @@ const PracticePage: React.FC = () => {
     const finalTime = Math.round((Date.now() - practiceStartTime) / 1000);
     const finalEarnedPoints = calculateEarnedPoints(finalCorrect, finalTotal);
 
+    const today = dayjs().format('YYYY-MM-DD');
+    const hasTodayPlan = dailyPlan && dailyPlan.date === today;
+    const actualTimeLimit = timeLimitEnabled ? timeLimit : undefined;
+
+    const unmetReasons: string[] = [];
+    let questionCountMatch = false;
+    let questionTypesMatch = false;
+    let timeLimitMatch = false;
+    let completedAsPlan = false;
+
+    if (hasTodayPlan) {
+      questionCountMatch = finalTotal === dailyPlan!.questionCount;
+      if (!questionCountMatch) {
+        if (finalTotal < dailyPlan!.questionCount) {
+          unmetReasons.push(`题量不足（做了${finalTotal}题，需${dailyPlan!.questionCount}题）`);
+        } else {
+          unmetReasons.push(`题量超出（做了${finalTotal}题，需${dailyPlan!.questionCount}题）`);
+        }
+      }
+
+      const hasAllTypes = dailyPlan!.questionTypes.every(type => types.includes(type));
+      const noExtraTypes = types.every(type => dailyPlan!.questionTypes.includes(type));
+      questionTypesMatch = hasAllTypes && noExtraTypes;
+      if (!questionTypesMatch) {
+        unmetReasons.push(`题型不匹配（计划：${dailyPlan!.questionTypes.map(t => QuestionTypeNames[t]).join('/')}，实际：${types.map(t => QuestionTypeNames[t]).join('/')}）`);
+      }
+
+      const planTimeLimitEnabled = dailyPlan!.timeLimit > 0;
+      const actualTimeLimitEnabled = timeLimitEnabled && timeLimit > 0;
+      timeLimitMatch = isTimeLimitFromPlan && planTimeLimitEnabled === actualTimeLimitEnabled && 
+        (!planTimeLimitEnabled || timeLimit === dailyPlan!.timeLimit);
+      if (!timeLimitMatch) {
+        if (!isTimeLimitFromPlan) {
+          unmetReasons.push('限时方式被修改');
+        } else if (planTimeLimitEnabled !== actualTimeLimitEnabled) {
+          unmetReasons.push(planTimeLimitEnabled ? '限时被关闭' : '新增了限时');
+        } else {
+          unmetReasons.push(`限时值不匹配（计划：${dailyPlan!.timeLimit / 60}分钟，实际：${timeLimit / 60}分钟）`);
+        }
+      }
+
+      completedAsPlan = questionCountMatch && questionTypesMatch && timeLimitMatch && (finalCorrect / finalTotal >= 0.6);
+    }
+
     const record: PracticeRecord = {
       id: `record_${Date.now()}`,
-      date: dayjs().format('YYYY-MM-DD'),
+      date: today,
       grade: selectedGrade,
       questionTypes: types,
       totalQuestions: finalTotal,
       correctCount: finalCorrect,
       totalTime: finalTime,
-      wrongQuestions: finalQuestions.filter(q => !q.isCorrect).map(q => q.id)
+      wrongQuestions: finalQuestions.filter(q => !q.isCorrect).map(q => q.id),
+      isPlanMatch: hasTodayPlan,
+      planQuestionCount: hasTodayPlan ? dailyPlan!.questionCount : undefined,
+      planQuestionTypes: hasTodayPlan ? dailyPlan!.questionTypes : undefined,
+      planTimeLimit: hasTodayPlan ? dailyPlan!.timeLimit : undefined,
+      actualTimeLimit: actualTimeLimit,
+      completedAsPlan: completedAsPlan,
+      unmetReasons: unmetReasons.length > 0 ? unmetReasons : undefined
     };
 
     addPracticeRecord(record);
     addPoints(finalEarnedPoints);
     setFinalEarnedPointsState(finalEarnedPoints);
 
-    if (finalCorrect / finalTotal >= 0.6) {
-      const actualTimeLimit = timeLimitEnabled ? timeLimit : undefined;
+    if (completedAsPlan) {
       completeDailyPlan(finalTotal, types, actualTimeLimit, isTimeLimitFromPlan);
     }
 
-    console.log('[Practice] 练习完成', { score: Math.round((finalCorrect / finalTotal) * 100), correctCount: finalCorrect, totalQuestions: finalTotal, earnedPoints: finalEarnedPoints, isTimeLimitFromPlan, timeLimit });
+    console.log('[Practice] 练习完成', { 
+      score: Math.round((finalCorrect / finalTotal) * 100), 
+      correctCount: finalCorrect, 
+      totalQuestions: finalTotal, 
+      earnedPoints: finalEarnedPoints, 
+      isTimeLimitFromPlan, 
+      timeLimit,
+      completedAsPlan,
+      unmetReasons
+    });
   };
 
   const handleTimeUp = () => {
@@ -475,6 +534,13 @@ const PracticePage: React.FC = () => {
   }
 
   if (mode === 'result') {
+    const today = dayjs().format('YYYY-MM-DD');
+    const hasTodayPlan = dailyPlan && dailyPlan.date === today;
+    const lastRecord = useAppStore.getState().practiceRecords.slice(-1)[0];
+    const isPlanMatch = lastRecord?.isPlanMatch;
+    const completedAsPlan = lastRecord?.completedAsPlan;
+    const unmetReasons = lastRecord?.unmetReasons || [];
+
     return (
       <View className={styles.pageContainer}>
         <View className={styles.resultSection}>
@@ -489,6 +555,67 @@ const PracticePage: React.FC = () => {
               完成{questions.length}道题，答对{correctCount}道
             </Text>
           </View>
+
+          {hasTodayPlan && (
+            <View className={classNames(styles.planResultCard, completedAsPlan ? styles.planSuccess : styles.planFailed)}>
+              <View className={styles.planResultHeader}>
+                <Text className={styles.planResultIcon}>
+                  {completedAsPlan ? '🎯' : '📝'}
+                </Text>
+                <View className={styles.planResultInfo}>
+                  <Text className={styles.planResultTitle}>
+                    {completedAsPlan ? '按计划完成！' : isPlanMatch ? '未达成计划要求' : '自由练习'}
+                  </Text>
+                  <Text className={styles.planResultSubtitle}>
+                    {completedAsPlan 
+                      ? '今日计划已点亮 ✨' 
+                      : isPlanMatch 
+                        ? '已记录到练习历史' 
+                        : '本次不影响每日计划'}
+                  </Text>
+                </View>
+              </View>
+              
+              {isPlanMatch && (
+                <View className={styles.planResultDetails}>
+                  <View className={styles.planResultItem}>
+                    <Text className={styles.planResultLabel}>题量</Text>
+                    <Text className={styles.planResultValue}>
+                      {questions.length} / {dailyPlan!.questionCount} 题
+                    </Text>
+                  </View>
+                  <View className={styles.planResultItem}>
+                    <Text className={styles.planResultLabel}>题型</Text>
+                    <Text className={styles.planResultValue}>
+                      {types.map(t => QuestionTypeNames[t]).join('/')}
+                    </Text>
+                  </View>
+                  <View className={styles.planResultItem}>
+                    <Text className={styles.planResultLabel}>限时</Text>
+                    <Text className={styles.planResultValue}>
+                      {timeLimitEnabled && timeLimit > 0 ? `${timeLimit / 60}分钟` : '不限时'}
+                      {isTimeLimitFromPlan ? '（来自计划）' : '（已修改）'}
+                    </Text>
+                  </View>
+                  <View className={styles.planResultItem}>
+                    <Text className={styles.planResultLabel}>正确率</Text>
+                    <Text className={styles.planResultValue}>
+                      {score}%
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+              {unmetReasons.length > 0 && (
+                <View className={styles.unmetReasons}>
+                  <Text className={styles.unmetReasonsTitle}>未达成原因：</Text>
+                  {unmetReasons.map((reason, idx) => (
+                    <Text key={idx} className={styles.unmetReasonItem}>• {reason}</Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
 
           <View className={styles.statsGrid}>
             <View className={styles.statCard}>

@@ -44,6 +44,22 @@ export interface PracticeRecord {
   correctCount: number;
   totalTime: number;
   wrongQuestions: string[];
+  isPlanMatch?: boolean;
+  planQuestionCount?: number;
+  planQuestionTypes?: QuestionType[];
+  planTimeLimit?: number;
+  actualTimeLimit?: number;
+  completedAsPlan?: boolean;
+  unmetReasons?: string[];
+}
+
+export interface PlanProgress {
+  questionCountMatch: boolean;
+  questionTypesMatch: boolean;
+  timeLimitMatch: boolean;
+  completedQuestions: number;
+  correctCount: number;
+  unmetReasons: string[];
 }
 
 export interface DailyPlan {
@@ -97,6 +113,10 @@ export interface DailyStats {
   questionCount: number;
   correctRate: number;
   avgTime: number;
+  planCompleted?: boolean;
+  planQuestionCount?: number;
+  planCorrectCount?: number;
+  planCorrectRate?: number;
 }
 
 export interface WeakType {

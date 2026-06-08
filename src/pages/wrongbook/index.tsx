@@ -181,23 +181,100 @@ const WrongBookPage: React.FC = () => {
   <title>口算错题${type}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Microsoft YaHei', sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+    body { font-family: 'Microsoft YaHei', 'SimHei', sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; color: #333; }
     .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
-    .title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-    .subtitle { font-size: 14px; color: #666; }
-    .info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; color: #666; }
+    .title { font-size: 28px; font-weight: bold; margin-bottom: 12px; color: #FF7A45; }
+    .subtitle { font-size: 14px; color: #666; margin-bottom: 8px; }
+    .filter-info { font-size: 13px; color: #888; background: #f5f5f5; padding: 8px 16px; border-radius: 20px; display: inline-block; }
+    .info { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; color: #666; padding: 15px; background: #fafafa; border-radius: 8px; }
+    .info-item { display: flex; align-items: center; gap: 8px; }
+    .info-label { color: #999; }
+    .info-value { font-weight: bold; color: #333; }
     .question-list { }
-    .question-item { margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 8px; }
-    .question-number { font-weight: bold; color: #FF7A45; margin-right: 10px; }
-    .question-expression { font-size: 18px; font-family: 'Courier New', monospace; }
-    .answer-section { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; }
-    .answer-label { color: #52C41A; font-weight: bold; }
-    .answer-value { font-family: 'Courier New', monospace; font-weight: bold; }
-    .wrong-type { font-size: 12px; color: #999; margin-top: 5px; }
-    .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 20px; }
+    .question-item { 
+      margin-bottom: 25px; 
+      padding: 20px; 
+      border: 1px solid #e8e8e8; 
+      border-radius: 12px; 
+      background: #fff;
+    }
+    .question-number { 
+      font-weight: bold; 
+      color: #FF7A45; 
+      margin-right: 12px; 
+      font-size: 18px;
+    }
+    .question-expression { 
+      font-size: 22px; 
+      font-family: 'Courier New', monospace; 
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .answer-blank { 
+      display: inline-block; 
+      min-width: 80px; 
+      border-bottom: 2px solid #333; 
+      margin-left: 15px; 
+      height: 30px;
+      vertical-align: bottom;
+    }
+    .answer-section { 
+      margin-top: 15px; 
+      padding-top: 15px; 
+      border-top: 1px dashed #ddd; 
+    }
+    .answer-row { 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+      margin-bottom: 8px;
+    }
+    .answer-label { 
+      color: #52C41A; 
+      font-weight: bold; 
+      font-size: 14px;
+    }
+    .answer-value { 
+      font-family: 'Courier New', monospace; 
+      font-weight: bold; 
+      font-size: 20px; 
+      color: #52C41A;
+    }
+    .wrong-type { 
+      font-size: 13px; 
+      color: #666; 
+      margin-top: 5px; 
+      background: #fff7e6; 
+      padding: 6px 12px; 
+      border-radius: 4px; 
+      display: inline-block;
+    }
+    .wrong-type-label { color: #FAAD14; font-weight: bold; }
+    .footer { 
+      margin-top: 50px; 
+      text-align: center; 
+      font-size: 12px; 
+      color: #999; 
+      border-top: 1px solid #eee; 
+      padding-top: 20px; 
+    }
+    .student-sign { 
+      margin-top: 40px; 
+      text-align: right; 
+      font-size: 14px; 
+      color: #666;
+    }
+    .sign-line { 
+      display: inline-block; 
+      width: 150px; 
+      border-bottom: 1px solid #333; 
+      margin-left: 10px;
+    }
     @media print {
       body { padding: 20px; }
       .question-item { page-break-inside: avoid; }
+      .filter-info { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .wrong-type { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
   </style>
 </head>
@@ -205,39 +282,77 @@ const WrongBookPage: React.FC = () => {
   <div class="header">
     <div class="title">📚 口算错题${type}</div>
     <div class="subtitle">${typeName} · 共${filteredQuestions.length}道题</div>
+    <div class="filter-info">
+      🔍 筛选范围：${typeName}
+    </div>
   </div>
   <div class="info">
-    <span>生成日期：${today}</span>
-    <span>学生姓名：${userProfile.name}</span>
+    <div class="info-item">
+      <span class="info-label">📅 生成日期：</span>
+      <span class="info-value">${today}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">👦 学生姓名：</span>
+      <span class="info-value">${userProfile.name}</span>
+    </div>
   </div>
   <div class="question-list">
 `;
 
     filteredQuestions.forEach((q, idx) => {
-      html += `
+      if (type === '题目卷') {
+        html += `
+    <div class="question-item">
+      <div>
+        <span class="question-number">${idx + 1}.</span>
+        <span class="question-expression">${q.expression} = </span>
+        <span class="answer-blank"></span>
+      </div>
+    </div>
+`;
+      } else {
+        html += `
     <div class="question-item">
       <div>
         <span class="question-number">${idx + 1}.</span>
         <span class="question-expression">${q.expression} = ?</span>
       </div>
-      ${type === '答案卷' ? `
       <div class="answer-section">
-        <span class="answer-label">正确答案：</span>
-        <span class="answer-value">${q.answer}</span>
-        <div class="wrong-type">错误类型：${q.wrongType} · 做错${q.wrongCount}次</div>
+        <div class="answer-row">
+          <span class="answer-label">✅ 正确答案：</span>
+          <span class="answer-value">${q.answer}</span>
+        </div>
+        <div class="wrong-type">
+          <span class="wrong-type-label">⚠️ 错因分析：</span>
+          ${q.wrongType} · 做错${q.wrongCount}次
+        </div>
       </div>
-      ` : ''}
     </div>
 `;
+      }
     });
 
-    html += `
+    if (type === '题目卷') {
+      html += `
+  </div>
+  <div class="student-sign">
+    学生签字：<span class="sign-line"></span>
+    <span style="margin-left: 30px;">日期：<span class="sign-line"></span></span>
   </div>
   <div class="footer">
     由「口算小达人」小程序生成 · 每天练习，进步看得见！
   </div>
 </body>
 </html>`;
+    } else {
+      html += `
+  </div>
+  <div class="footer">
+    由「口算小达人」小程序生成 · 每天练习，进步看得见！
+  </div>
+</body>
+</html>`;
+    }
 
     return html;
   };
