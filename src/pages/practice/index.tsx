@@ -49,6 +49,9 @@ const PracticePage: React.FC = () => {
   const [timeLimit, setTimeLimit] = useState(
     hasTodayPlan ? (dailyPlan!.timeLimit > 0 ? dailyPlan!.timeLimit : 600) : 600
   );
+  const [isTimeLimitFromPlan, setIsTimeLimitFromPlan] = useState(hasTodayPlan && dailyPlan!.timeLimit > 0);
+  const planLastUpdatedRef = useRef(dailyPlan?.updatedAt || '');
+  const [planChangeCount, setPlanChangeCount] = useState(0);
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -79,6 +82,22 @@ const PracticePage: React.FC = () => {
     return Math.round(correct * 1 + (s >= 90 ? 10 : s >= 80 ? 5 : 0));
   };
   const earnedPoints = calculateEarnedPoints(correctCount, questions.length);
+
+  useEffect(() => {
+    if (dailyPlan && dailyPlan.date === today && dailyPlan.updatedAt !== planLastUpdatedRef.current) {
+      planLastUpdatedRef.current = dailyPlan.updatedAt || '';
+      if (mode === 'config') {
+        setTypes(dailyPlan.questionTypes);
+        setQuantity(dailyPlan.questionCount);
+        setTimeLimitEnabled(dailyPlan.timeLimit > 0);
+        setTimeLimit(dailyPlan.timeLimit > 0 ? dailyPlan.timeLimit : 600);
+        setIsTimeLimitFromPlan(dailyPlan.timeLimit > 0);
+        setPlanChangeCount(prev => prev + 1);
+        console.log('[Practice] 检测到计划更新，自动刷新配置', { questionTypes: dailyPlan.questionTypes, questionCount: dailyPlan.questionCount, timeLimit: dailyPlan.timeLimit });
+        Taro.showToast({ title: '已更新为最新计划配置', icon: 'success' });
+      }
+    }
+  }, [dailyPlan, today, mode]);
 
   useEffect(() => {
     return () => {
@@ -120,9 +139,11 @@ const PracticePage: React.FC = () => {
     if (types.includes(type)) {
       if (types.length > 1) {
         setTypes(types.filter(t => t !== type));
+        setIsTimeLimitFromPlan(false);
       }
     } else {
       setTypes([...types, type]);
+      setIsTimeLimitFromPlan(false);
     }
   };
 
@@ -221,10 +242,11 @@ const PracticePage: React.FC = () => {
     setFinalEarnedPointsState(finalEarnedPoints);
 
     if (finalCorrect / finalTotal >= 0.6) {
-      completeDailyPlan(finalTotal, types);
+      const actualTimeLimit = timeLimitEnabled ? timeLimit : undefined;
+      completeDailyPlan(finalTotal, types, actualTimeLimit, isTimeLimitFromPlan);
     }
 
-    console.log('[Practice] 练习完成', { score: Math.round((finalCorrect / finalTotal) * 100), correctCount: finalCorrect, totalQuestions: finalTotal, earnedPoints: finalEarnedPoints });
+    console.log('[Practice] 练习完成', { score: Math.round((finalCorrect / finalTotal) * 100), correctCount: finalCorrect, totalQuestions: finalTotal, earnedPoints: finalEarnedPoints, isTimeLimitFromPlan, timeLimit });
   };
 
   const handleTimeUp = () => {

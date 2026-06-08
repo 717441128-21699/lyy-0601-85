@@ -55,6 +55,7 @@ export interface DailyPlan {
   timeLimit: number;
   completed: boolean;
   completedAt?: string;
+  updatedAt?: string;
 }
 
 export interface Reward {

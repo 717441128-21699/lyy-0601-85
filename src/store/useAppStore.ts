@@ -55,7 +55,8 @@ const getInitialState = (): AppState => {
     questionTypes: ['addition', 'subtraction'],
     grade: 'grade2',
     timeLimit: 600,
-    completed: false
+    completed: false,
+    updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
   };
   
   return {
@@ -88,7 +89,7 @@ interface AppStore extends AppState {
   redeemReward: (rewardId: string) => boolean;
   checkIn: () => boolean;
   updateDailyPlan: (plan: Partial<DailyPlan>) => void;
-  completeDailyPlan: (totalQuestions?: number, questionTypes?: QuestionType[]) => boolean;
+  completeDailyPlan: (totalQuestions?: number, questionTypes?: QuestionType[], timeLimit?: number, isTimeLimitFromPlan?: boolean) => boolean;
   updateSettings: (settings: Partial<AppSettings>) => void;
   verifyParentPassword: (password: string) => boolean;
 }
@@ -254,25 +255,38 @@ export const useAppStore = create<AppStore>((set, get) => ({
   updateDailyPlan: (plan) => {
     const currentPlan = get().dailyPlan;
     if (currentPlan) {
-      set({ dailyPlan: { ...currentPlan, ...plan } });
+      set({ dailyPlan: { ...currentPlan, ...plan, updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss') } });
       get().saveToStorage();
     }
   },
   
-  completeDailyPlan: (totalQuestions?: number, questionTypes?: QuestionType[]) => {
+  completeDailyPlan: (totalQuestions?: number, questionTypes?: QuestionType[], timeLimit?: number, isTimeLimitFromPlan?: boolean) => {
     const plan = get().dailyPlan;
     const today = dayjs().format('YYYY-MM-DD');
     
     if (plan && plan.date === today) {
       if (totalQuestions !== undefined && totalQuestions < plan.questionCount) {
+        console.log('[Plan] 题量不足', { actual: totalQuestions, required: plan.questionCount });
         return false;
       }
       
       if (questionTypes && plan.questionTypes.length > 0) {
         const hasAllTypes = plan.questionTypes.every(type => questionTypes.includes(type));
-        if (!hasAllTypes) {
+        const noExtraTypes = questionTypes.every(type => plan.questionTypes.includes(type));
+        if (!hasAllTypes || !noExtraTypes) {
+          console.log('[Plan] 题型不匹配', { actual: questionTypes, required: plan.questionTypes });
           return false;
         }
+      }
+      
+      if (isTimeLimitFromPlan !== undefined && !isTimeLimitFromPlan) {
+        console.log('[Plan] 限时来源不是计划');
+        return false;
+      }
+      
+      if (timeLimit !== undefined && plan.timeLimit !== undefined && timeLimit !== plan.timeLimit) {
+        console.log('[Plan] 限时值不匹配', { actual: timeLimit, required: plan.timeLimit });
+        return false;
       }
       
       set({
@@ -283,6 +297,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
         }
       });
       get().saveToStorage();
+      console.log('[Plan] 今日计划已完成');
       return true;
     }
     return false;
