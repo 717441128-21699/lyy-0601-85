@@ -231,24 +231,30 @@ const ReportPage: React.FC = () => {
 
           <View className={styles.dailyChart}>
             {report.dailyStats.map((stat, index) => (
-              <View className={styles.chartBar} key={index}>
-                {stat.planCompleted && (
+              <View className={classNames(styles.chartBar, stat.questionCount === 0 && styles.chartBarEmpty)} key={index}>
+                {stat.questionCount > 0 && stat.planCompleted && (
                   <View className={styles.planBadge}>✓</View>
                 )}
                 <View className={styles.barContainer}>
-                  <View
-                    className={classNames(
-                      styles.barFill,
-                      stat.planCompleted ? styles.barPlanCompleted : ''
-                    )}
-                    style={{ height: `${Math.max(stat.correctRate, 10)}%` }}
-                  />
-                  <Text className={styles.barRate}>{stat.correctRate}%</Text>
+                  {stat.questionCount > 0 ? (
+                    <>
+                      <View
+                        className={classNames(
+                          styles.barFill,
+                          stat.planCompleted ? styles.barPlanCompleted : ''
+                        )}
+                        style={{ height: `${Math.max(stat.correctRate, 10)}%` }}
+                      />
+                      <Text className={styles.barRate}>{stat.correctRate}%</Text>
+                    </>
+                  ) : (
+                    <Text className={styles.barEmpty}>—</Text>
+                  )}
                 </View>
                 <Text className={styles.barCount}>
-                  {stat.questionCount > 0 ? `${stat.questionCount}题` : '-'}
+                  {stat.questionCount > 0 ? `${stat.questionCount}题` : ''}
                 </Text>
-                {stat.planCompleted && (
+                {stat.questionCount > 0 && stat.planCompleted && (
                   <Text className={styles.planCorrectRate}>
                     计划{stat.planCorrectRate}%
                   </Text>

@@ -212,6 +212,16 @@
   position: relative;
 }
 
+.chartBarEmpty {
+  opacity: 0.5;
+}
+
+.barEmpty {
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+  line-height: 120rpx;
+}
+
 .weakTypesSection,
 .strongTypesSection {
   display: flex;

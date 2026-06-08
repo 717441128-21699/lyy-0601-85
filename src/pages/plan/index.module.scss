@@ -239,6 +239,11 @@
   color: $color-success;
 }
 
+.recordFailed {
+  background: rgba(250, 173, 20, 0.1);
+  color: $color-warning;
+}
+
 .recordNormal {
   background: $color-bg-gray;
   color: $color-text-secondary;

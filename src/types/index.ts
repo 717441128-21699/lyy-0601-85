@@ -44,6 +44,7 @@ export interface PracticeRecord {
   correctCount: number;
   totalTime: number;
   wrongQuestions: string[];
+  planInitiated?: boolean;
   isPlanMatch?: boolean;
   planQuestionCount?: number;
   planQuestionTypes?: QuestionType[];

@@ -50,7 +50,7 @@ const PlanPage: React.FC = () => {
   ];
 
   const handleStartPractice = useCallback(() => {
-    Taro.switchTab({ url: '/pages/practice/index' });
+    Taro.switchTab({ url: '/pages/practice/index?from=plan' });
   }, []);
 
   const handleToggleType = useCallback((type: QuestionType) => {
@@ -97,25 +97,26 @@ const PlanPage: React.FC = () => {
   };
 
   const completedDays = practiceRecords
-    .filter(r => r.totalQuestions > 0)
+    .filter(r => r.completedAsPlan)
     .map(r => r.date)
     .filter((v, i, a) => a.indexOf(v) === i).length;
 
-  const todayRecords = practiceRecords.filter(r => r.date === today);
-  const todayTotalQuestions = todayRecords.reduce((sum, r) => sum + r.totalQuestions, 0);
-  const todayCorrectCount = todayRecords.reduce((sum, r) => sum + r.correctCount, 0);
+  const todayAllRecords = practiceRecords.filter(r => r.date === today);
+  const todayPlanRecords = todayAllRecords.filter(r => r.planInitiated);
+  const todayTotalQuestions = todayPlanRecords.reduce((sum, r) => sum + r.totalQuestions, 0);
+  const todayCorrectCount = todayPlanRecords.reduce((sum, r) => sum + r.correctCount, 0);
   const todayCorrectRate = todayTotalQuestions > 0 ? Math.round((todayCorrectCount / todayTotalQuestions) * 100) : 0;
   
-  const todayPlanCompleted = todayRecords.some(r => r.completedAsPlan);
-  const lastUnmetReasons = todayRecords.length > 0 
-    ? todayRecords[todayRecords.length - 1].unmetReasons 
+  const todayPlanCompleted = todayPlanRecords.some(r => r.completedAsPlan);
+  const lastUnmetReasons = todayPlanRecords.length > 0 
+    ? todayPlanRecords[todayPlanRecords.length - 1].unmetReasons 
     : [];
 
   const getProgressStatus = () => {
     if (isCompleted) return { text: '已完成', status: 'completed' };
-    if (todayTotalQuestions === 0) return { text: '未开始', status: 'pending' };
+    if (todayPlanRecords.length === 0) return { text: '未开始', status: 'pending' };
     if (todayTotalQuestions < dailyPlan!.questionCount) return { text: '进行中', status: 'progress' };
-    if (lastUnmetReasons.length > 0) return { text: '未达成', status: 'failed' };
+    if (lastUnmetReasons && lastUnmetReasons.length > 0) return { text: '未达成', status: 'failed' };
     return { text: '已完成', status: 'completed' };
   };
 
@@ -192,7 +193,7 @@ const PlanPage: React.FC = () => {
                     正确率: {todayCorrectRate}%
                   </Text>
                   <Text className={styles.progressStat}>
-                    {todayRecords.length} 次练习
+                    {todayPlanRecords.length} 次计划练习
                   </Text>
                 </View>
               </View>
@@ -233,10 +234,10 @@ const PlanPage: React.FC = () => {
               ))}
             </View>
 
-            {todayRecords.length > 0 && (
+            {todayAllRecords.length > 0 && (
               <View className={styles.todayRecordsSection}>
                 <Text className={styles.sectionTitle}>今日练习记录</Text>
-                {todayRecords.map((record, idx) => (
+                {todayAllRecords.map((record, idx) => (
                   <View key={record.id} className={styles.recordItem}>
                     <View className={styles.recordInfo}>
                       <Text className={styles.recordType}>
@@ -248,9 +249,11 @@ const PlanPage: React.FC = () => {
                     </View>
                     <View className={classNames(
                       styles.recordBadge,
-                      record.completedAsPlan ? styles.recordSuccess : styles.recordNormal
+                      record.completedAsPlan ? styles.recordSuccess : 
+                      record.planInitiated ? styles.recordFailed : styles.recordNormal
                     )}>
-                      {record.completedAsPlan ? '✓ 按计划' : '自由练习'}
+                      {record.completedAsPlan ? '✓ 按计划' : 
+                       record.planInitiated ? '未达成' : '自由练习'}
                     </View>
                   </View>
                 ))}

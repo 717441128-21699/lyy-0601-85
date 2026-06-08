@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, Button, Switch, Input } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useRouter } from '@tarojs/taro';
 import classNames from 'classnames';
 import styles from './index.module.scss';
 import { useAppStore } from '@/store/useAppStore';
@@ -19,6 +19,7 @@ import StarRating from '@/components/StarRating';
 type PageMode = 'config' | 'practice' | 'result';
 
 const PracticePage: React.FC = () => {
+  const router = useRouter();
   const {
     currentGrade,
     selectedQuestionTypes,
@@ -34,6 +35,7 @@ const PracticePage: React.FC = () => {
 
   const today = dayjs().format('YYYY-MM-DD');
   const hasTodayPlan = dailyPlan && dailyPlan.date === today;
+  const fromPlan = router.params?.from === 'plan';
 
   const [mode, setMode] = useState<PageMode>('config');
   const [selectedGrade, setSelectedGrade] = useState<Grade>(currentGrade);
@@ -49,7 +51,8 @@ const PracticePage: React.FC = () => {
   const [timeLimit, setTimeLimit] = useState(
     hasTodayPlan ? (dailyPlan!.timeLimit > 0 ? dailyPlan!.timeLimit : 600) : 600
   );
-  const [isTimeLimitFromPlan, setIsTimeLimitFromPlan] = useState(hasTodayPlan && dailyPlan!.timeLimit > 0);
+  const [isTimeLimitFromPlan, setIsTimeLimitFromPlan] = useState(hasTodayPlan);
+  const [planInitiated, setPlanInitiated] = useState(fromPlan && hasTodayPlan);
   const planLastUpdatedRef = useRef(dailyPlan?.updatedAt || '');
   const [planChangeCount, setPlanChangeCount] = useState(0);
 
@@ -140,10 +143,12 @@ const PracticePage: React.FC = () => {
       if (types.length > 1) {
         setTypes(types.filter(t => t !== type));
         setIsTimeLimitFromPlan(false);
+        setPlanInitiated(false);
       }
     } else {
       setTypes([...types, type]);
       setIsTimeLimitFromPlan(false);
+      setPlanInitiated(false);
     }
   };
 
@@ -228,7 +233,7 @@ const PracticePage: React.FC = () => {
 
     const today = dayjs().format('YYYY-MM-DD');
     const hasTodayPlan = dailyPlan && dailyPlan.date === today;
-    const actualTimeLimit = timeLimitEnabled ? timeLimit : undefined;
+    const actualTimeLimit = timeLimitEnabled ? timeLimit : 0;
 
     const unmetReasons: string[] = [];
     let questionCountMatch = false;
@@ -236,7 +241,7 @@ const PracticePage: React.FC = () => {
     let timeLimitMatch = false;
     let completedAsPlan = false;
 
-    if (hasTodayPlan) {
+    if (hasTodayPlan && planInitiated) {
       questionCountMatch = finalTotal === dailyPlan!.questionCount;
       if (!questionCountMatch) {
         if (finalTotal < dailyPlan!.questionCount) {
@@ -256,10 +261,10 @@ const PracticePage: React.FC = () => {
       const planTimeLimitEnabled = dailyPlan!.timeLimit > 0;
       const actualTimeLimitEnabled = timeLimitEnabled && timeLimit > 0;
       timeLimitMatch = isTimeLimitFromPlan && planTimeLimitEnabled === actualTimeLimitEnabled && 
-        (!planTimeLimitEnabled || timeLimit === dailyPlan!.timeLimit);
+        (planTimeLimitEnabled ? timeLimit === dailyPlan!.timeLimit : true);
       if (!timeLimitMatch) {
         if (!isTimeLimitFromPlan) {
-          unmetReasons.push('限时方式被修改');
+          unmetReasons.push('配置被修改，不再按计划计算');
         } else if (planTimeLimitEnabled !== actualTimeLimitEnabled) {
           unmetReasons.push(planTimeLimitEnabled ? '限时被关闭' : '新增了限时');
         } else {
@@ -267,7 +272,7 @@ const PracticePage: React.FC = () => {
         }
       }
 
-      completedAsPlan = questionCountMatch && questionTypesMatch && timeLimitMatch && (finalCorrect / finalTotal >= 0.6);
+      completedAsPlan = planInitiated && questionCountMatch && questionTypesMatch && timeLimitMatch && (finalCorrect / finalTotal >= 0.6);
     }
 
     const record: PracticeRecord = {
@@ -279,13 +284,14 @@ const PracticePage: React.FC = () => {
       correctCount: finalCorrect,
       totalTime: finalTime,
       wrongQuestions: finalQuestions.filter(q => !q.isCorrect).map(q => q.id),
-      isPlanMatch: hasTodayPlan,
+      planInitiated: planInitiated,
+      isPlanMatch: hasTodayPlan && planInitiated,
       planQuestionCount: hasTodayPlan ? dailyPlan!.questionCount : undefined,
       planQuestionTypes: hasTodayPlan ? dailyPlan!.questionTypes : undefined,
       planTimeLimit: hasTodayPlan ? dailyPlan!.timeLimit : undefined,
       actualTimeLimit: actualTimeLimit,
       completedAsPlan: completedAsPlan,
-      unmetReasons: unmetReasons.length > 0 ? unmetReasons : undefined
+      unmetReasons: planInitiated && unmetReasons.length > 0 ? unmetReasons : undefined
     };
 
     addPracticeRecord(record);
@@ -301,6 +307,7 @@ const PracticePage: React.FC = () => {
       correctCount: finalCorrect, 
       totalQuestions: finalTotal, 
       earnedPoints: finalEarnedPoints, 
+      planInitiated,
       isTimeLimitFromPlan, 
       timeLimit,
       completedAsPlan,
@@ -403,7 +410,11 @@ const PracticePage: React.FC = () => {
                 <Button
                   key={q}
                   className={classNames(styles.quantityBtn, quantity === q && styles.active)}
-                  onClick={() => setQuantity(q)}
+                  onClick={() => {
+                    setQuantity(q);
+                    setIsTimeLimitFromPlan(false);
+                    setPlanInitiated(false);
+                  }}
                 >
                   {q}道
                 </Button>
@@ -416,7 +427,11 @@ const PracticePage: React.FC = () => {
               <Text className={styles.sectionTitle} style={{ marginBottom: 0 }}>⏱️ 限时答题</Text>
               <Switch
                 checked={timeLimitEnabled}
-                onChange={(e) => setTimeLimitEnabled(e.detail.value)}
+                onChange={(e) => {
+                  setTimeLimitEnabled(e.detail.value);
+                  setIsTimeLimitFromPlan(false);
+                  setPlanInitiated(false);
+                }}
                 color="#FF7A45"
               />
             </View>
@@ -427,7 +442,11 @@ const PracticePage: React.FC = () => {
                   className={styles.input}
                   type="number"
                   value={String(timeLimit / 60)}
-                  onInput={(e) => setTimeLimit(Math.max(1, parseInt(e.detail.value, 10) || 1) * 60)}
+                  onInput={(e) => {
+                    setTimeLimit(Math.max(1, parseInt(e.detail.value, 10) || 1) * 60);
+                    setIsTimeLimitFromPlan(false);
+                    setPlanInitiated(false);
+                  }}
                 />
                 <Text className={styles.unit}>分钟</Text>
               </View>
@@ -442,6 +461,13 @@ const PracticePage: React.FC = () => {
               </Text>
             </View>
           </View>
+          
+          {planInitiated && (
+            <View className={styles.planIndicator}>
+              <Text className={styles.planIndicatorIcon}>🎯</Text>
+              <Text className={styles.planIndicatorText}>已从计划页带入配置，修改后将不再按计划计算</Text>
+            </View>
+          )}
 
           <Button
             className={styles.startBtn}

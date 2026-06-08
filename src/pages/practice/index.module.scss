@@ -137,6 +137,26 @@
   }
 }
 
+.planIndicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-lg;
+}
+
+.planIndicatorIcon {
+  font-size: 28rpx;
+}
+
+.planIndicatorText {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  flex: 1;
+}
+
 .startBtn {
   @include button-reset;
   width: 100%;
